@@ -9,3 +9,5 @@ output/
 bin/
 
 .env
+.env.local
+*.env
