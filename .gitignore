@@ -7,3 +7,5 @@ output/
 
 # Go
 bin/
+
+.env
