@@ -20,7 +20,7 @@ type Criteria struct {
 	ProfessionalCheck bool `json:"json:professional_check"`
 
 	// outdated opinions
-	OutdatedOpinions OutdatedOpinions `json:"outdated_opinions"`
+	OutdatedOpinions []OutdatedOpinions `json:"outdated_opinions"`
 
 	// Context for the AI
 	AdditionalInstructions string `json:"additional_instructions"`

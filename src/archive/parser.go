@@ -33,8 +33,8 @@ func FileParser(filepath string) ([]Tweet, error) {
 
 	var tweets []Tweet
 
-	for _, w := range wrappers {
-		tweets = append(tweets, Tweet{
+	for _, w := range wrappers { // loop through each of the tweet wrappers
+		tweets = append(tweets, Tweet{ // inside each tweet, collect the necessary values and append them to the slice as a struct with the necessary values
 			ID: w.Tweet.ID,
 			Text: w.Tweet.Text,
 			CreatedAt: w.Tweet.CreatedAt,
@@ -42,5 +42,5 @@ func FileParser(filepath string) ([]Tweet, error) {
 		}) 
 	}
 
-	return tweets, nil
+	return tweets, nil // return the tweets
 }
