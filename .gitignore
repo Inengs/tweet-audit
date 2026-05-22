@@ -1,7 +1,10 @@
 twitter-*.zip
 data/
 *.zip
-config.json        # the real one with your API key
+
+# config file with API key
+config.json        
+
 output/
 *.csv
 

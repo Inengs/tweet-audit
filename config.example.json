@@ -1,0 +1,7 @@
+{
+  "gemini_api_key": "YOUR_KEY_HERE",
+  "username": "your_x_username",
+  "archive_path": "/path/to/tweets.js",
+  "output_path": "./flagged_tweets.csv",
+  "criteria": {}
+}

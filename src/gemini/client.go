@@ -8,7 +8,7 @@ import (
 	"google.golang.org/genai"
 )
 
-func client() {
+func Client() {
 	ctx := context.Background()
 	client, err := genai.NewClient(ctx, nil)
 	if err != nil {
@@ -17,7 +17,7 @@ func client() {
 
 	result, err := client.Models.GenerateContent(
 		ctx,
-		"gemini-3-flash-preview",
+		"gemini-3.5-flash",
 		genai.Text("Explain how AI works in a few words"),
 		nil,
 	)
