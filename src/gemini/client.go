@@ -54,7 +54,7 @@ func (c *Client) AnalyzeTweets(tweets []archive.Tweet, username string, criteria
 
 	ctx := context.Background()
 
-	prompt := buildBatchPrompt(tweets, username, criteria)
+	prompt := BuildBatchPrompt(tweets, username, criteria)
 
 	temp := float32(0.1)
 	resp, err := c.client.Models.GenerateContent(
@@ -72,10 +72,10 @@ func (c *Client) AnalyzeTweets(tweets []archive.Tweet, username string, criteria
 	}
 
 	text := resp.Candidates[0].Content.Parts[0].Text
-	return parseFlaggedTweets(text)
+	return ParseFlaggedTweets(text)
 } 
 
-func buildBatchPrompt(tweets []archive.Tweet, username string, criteria config.Criteria) string {
+func BuildBatchPrompt(tweets []archive.Tweet, username string, criteria config.Criteria) string {
 	var sb strings.Builder
 
 	for i, t := range tweets {
@@ -118,7 +118,7 @@ Tweets:
 		sb.String(),)
 }
 
-func parseFlaggedTweets(responseText string) ([]FlaggedTweet, error) {
+func ParseFlaggedTweets(responseText string) ([]FlaggedTweet, error) {
 	// formats the result from gemini to make it more useful
 	text := strings.TrimSpace(responseText)
 	text = strings.TrimPrefix(text, "```json")
