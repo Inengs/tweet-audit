@@ -6,4 +6,8 @@ import (
 	"sync"
 )
 
-type CSVWriter
+type CSVWriter struct {
+    file   *os.File
+    writer *csv.Writer
+    mu     sync.Mutex // Protects against concurrent writes if you use goroutines later
+}
