@@ -5,7 +5,7 @@ data/
 # config file with API key
 config.json        
 
-output/
+
 *.csv
 
 # Go
