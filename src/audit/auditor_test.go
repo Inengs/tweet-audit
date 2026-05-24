@@ -68,23 +68,24 @@ func TestAuditTweets_RetryOn429(t *testing.T) {
 
 func TestAuditTweets_ContextCancellation(t *testing.T) {
 	mock := &gemini.MockGeminiClient{
+		// this is a placeholder mock for audit tweets
 		AnalyzeTweetsFunc: func(tweets []archive.Tweet, username string, criteria config.Criteria) ([]gemini.FlaggedTweet, error) {
 			return []gemini.FlaggedTweet{}, nil
 		},
 	}
 
 	tweets := make([]archive.Tweet, 100) // 5 batches
-	ctx, cancel := context.WithCancel(context.Background())
-	cancel() // cancel immediately
+	ctx, cancel := context.WithCancel(context.Background()) // this gives a context and a cancel
+	cancel() // cancel immediately before the function starts
 
-	results, err := audit.AuditTweets(ctx, mock, tweets, "user", config.Criteria{})
+	results, err := audit.AuditTweets(ctx, mock, tweets, "user", config.Criteria{}) // at the start of each batch, the auditor will check ctx.Done(), since context has been cancelled, ctx.Done() fires immediately
 
 	if err == nil {
-		t.Errorf("expected context cancellation error, got nil")
+		t.Errorf("expected context cancellation error, got nil") // we expect the cancellation error, which we had set off before
 	}
 
 	if results != nil {
-		t.Errorf("expected no results after cancellation, got %d", len(results))
+		t.Errorf("expected no results after cancellation, got %d", len(results)) // we expect no results since, the error is set off on the first batch
 	}
 }
 
