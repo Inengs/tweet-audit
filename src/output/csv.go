@@ -23,7 +23,10 @@ func CreateCSVFile(outputPath string) (*CSVWriter, error){
 	writer := csv.NewWriter(file) // returns a new writer that writes to file
 
 	// write a header row 
-	writer.Write([]string{"tweet_url", "deleted"})
+	err = writer.Write([]string{"tweet_url", "deleted"})
+	if err != nil {
+		return nil, fmt.Errorf("failed to write header row: %v", err)
+	}
 
 	// flush writes to disk
 	writer.Flush()

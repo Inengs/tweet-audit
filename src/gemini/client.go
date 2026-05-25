@@ -79,7 +79,7 @@ func BuildBatchPrompt(tweets []archive.Tweet, username string, criteria config.C
 	var sb strings.Builder
 
 	for i, t := range tweets {
-		sb.WriteString(fmt.Sprintf("Tweet %d | ID: %s | Text: \"%s\"\n\n", i+1, t.ID, t.Text))
+		fmt.Fprintf(&sb, "Tweet %d | ID: %s", i+1, t.ID)
 	}
 
 	return fmt.Sprintf(`You are auditing old tweets for deletion.
@@ -144,12 +144,12 @@ func formatOutdatedOpinions(opinions []config.OutdatedOpinions) string {
 
 	var sb strings.Builder
 	for _, opinion := range opinions {
-		sb.WriteString(fmt.Sprintf("- %s: Used to believe \"%s\"", opinion.Topic, opinion.OldView))
+		fmt.Fprintf(&sb, "- %s: Used to believe \"%s\"", opinion.Topic, opinion.OldView)
 		if opinion.NewView != "" {
-			sb.WriteString(fmt.Sprintf(" → Now: \"%s\"", opinion.NewView))
+			fmt.Fprintf(&sb, " → Now: \"%s\"", opinion.NewView)
 		}
 		if opinion.Since != "" {
-			sb.WriteString(fmt.Sprintf(" (since %s)", opinion.Since))
+			fmt.Fprintf(&sb, " (since %s)", opinion.Since)
 		}
 		sb.WriteString("\n")
 	}

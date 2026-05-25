@@ -71,15 +71,15 @@ func LoadConfig(path string) (*Config, error) {
 
 	// check for Archive path
 	if config.ArchivePath == "" {
-		return nil, fmt.Errorf("Archive path is required in config.json")
+		return nil, fmt.Errorf("archive path is required in config.json")
 	}
 
 	if config.OutputPath == "" {
-		return nil, fmt.Errorf("Output Path are required in the config.json")
+		return nil, fmt.Errorf("output Path are required in the config.json")
 	}
 
 	if config.Username == "" {
-		return nil, fmt.Errorf("Your twitter username is required in config.json")
+		return nil, fmt.Errorf("your twitter username is required in config.json")
 	}
 
 	return &config, nil
