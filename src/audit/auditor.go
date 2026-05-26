@@ -70,8 +70,11 @@ func AuditTweets(
 				// if there is an error
 				var apiErr *googleapi.Error
 				if errors.As(err, &apiErr) && apiErr.Code == 429 { // if error is rate limit
-					time.Sleep(5 * time.Second) // wait 5 seconds
-
+					select {
+					case <-ctx.Done():
+						return nil, ctx.Err()
+					case <-time.After(5 * time.Second):
+					}
 					continue 
 				} else {
 					// if not 429 error. log and move onto the next cycle of batches
