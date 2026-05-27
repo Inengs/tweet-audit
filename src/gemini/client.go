@@ -38,7 +38,7 @@ func NewClient(apiKey string) (*Client, error) {
 	}
 
 	return &Client{ 
-		model: "gemini-2.5-flash", // use this version, seems like the best
+		model: "gemini-2.5-flash-lite", // use this version, seems like the best
 		client: client,
 	}, nil
 }
@@ -79,7 +79,7 @@ func BuildBatchPrompt(tweets []archive.Tweet, username string, criteria config.C
 	var sb strings.Builder
 
 	for i, t := range tweets {
-		fmt.Fprintf(&sb, "Tweet %d | ID: %s", i+1, t.ID)
+		fmt.Fprintf(&sb, "Tweet %d | ID: %s | Text: \"%s\"\n\n", i+1, t.ID, t.Text)
 	}
 
 	return fmt.Sprintf(`You are auditing old tweets for deletion.
@@ -106,6 +106,8 @@ Return a JSON array like this (empty array if none should be deleted):
     "confidence": 8
   }
 ]
+
+IMPORTANT: Respond with ONLY a valid JSON array. No explanations, no text, no markdown. If no tweets should be flagged, respond with exactly: []
 
 Tweets:
 %s`, strings.Join(criteria.ForbiddenWords, ", "),

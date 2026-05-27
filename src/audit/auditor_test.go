@@ -8,6 +8,7 @@ import (
 	"github.com/Inengs/tweet-audit/src/audit"
 	"github.com/Inengs/tweet-audit/src/config"
 	"github.com/Inengs/tweet-audit/src/gemini"
+	"golang.org/x/time/rate"
 	"google.golang.org/api/googleapi"
 )
 
@@ -36,6 +37,7 @@ func TestSplitIntoBatches(t *testing.T) {
 
 func TestAuditTweets_RetryOn429(t *testing.T) {
 	callCount := 0
+	
 
 	mock := gemini.MockGeminiClient{
 		AnalyzeTweetsFunc: func(tweets []archive.Tweet, username string, criteria config.Criteria) ([]gemini.FlaggedTweet, error) {
@@ -53,7 +55,8 @@ func TestAuditTweets_RetryOn429(t *testing.T) {
 	tweets := make([]archive.Tweet, 5)
     ctx := context.Background()
     
-    results, err := audit.AuditTweets(ctx, &mock, tweets, "user", config.Criteria{})
+	limiter := rate.NewLimiter(rate.Inf, 1)
+    results, err := audit.AuditTweets(ctx, &mock, limiter, tweets, "user", config.Criteria{})
     
     if err != nil {
         t.Errorf("unexpected error: %v", err)
@@ -78,7 +81,8 @@ func TestAuditTweets_ContextCancellation(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background()) // this gives a context and a cancel
 	cancel() // cancel immediately before the function starts
 
-	results, err := audit.AuditTweets(ctx, mock, tweets, "user", config.Criteria{}) // at the start of each batch, the auditor will check ctx.Done(), since context has been cancelled, ctx.Done() fires immediately
+	limiter := rate.NewLimiter(rate.Inf, 1)
+	results, err := audit.AuditTweets(ctx, mock, limiter, tweets, "user", config.Criteria{}) // at the start of each batch, the auditor will check ctx.Done(), since context has been cancelled, ctx.Done() fires immediately
 
 	if err == nil {
 		t.Errorf("expected context cancellation error, got nil") // we expect the cancellation error, which we had set off before
@@ -101,7 +105,8 @@ func TestAuditTweets_ReturnsFlaggedTweets(t *testing.T) {
 	tweets := make([]archive.Tweet, 5)
 	ctx := context.Background()
 
-	results, err := audit.AuditTweets(ctx, mock, tweets, "user", config.Criteria{})
+	limiter := rate.NewLimiter(rate.Inf, 1)
+	results, err := audit.AuditTweets(ctx, mock, limiter, tweets, "user", config.Criteria{})
 
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)

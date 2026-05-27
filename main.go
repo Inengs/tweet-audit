@@ -6,12 +6,14 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"time"
 
 	"github.com/Inengs/tweet-audit/src/archive"
 	"github.com/Inengs/tweet-audit/src/audit"
 	"github.com/Inengs/tweet-audit/src/config"
 	"github.com/Inengs/tweet-audit/src/gemini"
 	"github.com/Inengs/tweet-audit/src/output"
+	"golang.org/x/time/rate"
 )
 
 func main() {
@@ -34,9 +36,10 @@ func main() {
 		log.Fatalf("failed to create Gemini client: %v", err)
 	}
 
+	limiter := rate.NewLimiter(rate.Every(12*time.Second), 5) // rate limiter
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
-	flaggedTweets, err := audit.AuditTweets(ctx, geminiClient, archiveTweets, c.Username, c.Criteria)
+	flaggedTweets, err := audit.AuditTweets(ctx, geminiClient, limiter, archiveTweets, c.Username, c.Criteria)
 	if err != nil {
 		log.Fatalf("failed to properly audit the tweets, %v", err)
 	}

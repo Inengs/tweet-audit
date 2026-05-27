@@ -9,7 +9,8 @@ import (
 	"github.com/Inengs/tweet-audit/src/archive"
 	"github.com/Inengs/tweet-audit/src/config"
 	"github.com/Inengs/tweet-audit/src/gemini"
-	"google.golang.org/api/googleapi"
+	"golang.org/x/time/rate"
+	"google.golang.org/genai"
 )
 
 // interface for mock gemini client
@@ -40,6 +41,7 @@ func SplitIntoBatches(tweets []archive.Tweet, size int) ([][]archive.Tweet, erro
 func AuditTweets(
 	ctx context.Context,
 	client TweetAnalyzer,
+	limiter *rate.Limiter,
 	tweets []archive.Tweet,
 	username string,
 	criteria config.Criteria,
@@ -64,11 +66,15 @@ func AuditTweets(
 		for retry := 0; retry < 3; retry++ {
 			// for each retry
 
+			limiter.Wait(ctx)
+			
 			results, err := client.AnalyzeTweets(batch, username, criteria) // call analyze tweets
+
+			fmt.Printf("error type: %T\n", err)
 
 			if err != nil {
 				// if there is an error
-				var apiErr *googleapi.Error
+				var apiErr *genai.APIError
 				if errors.As(err, &apiErr) && apiErr.Code == 429 { // if error is rate limit
 					select {
 					case <-ctx.Done():
