@@ -9,6 +9,7 @@ import (
 	"github.com/Inengs/tweet-audit/src/archive"
 	"github.com/Inengs/tweet-audit/src/config"
 	"github.com/Inengs/tweet-audit/src/gemini"
+	"github.com/schollz/progressbar/v3"
 	"golang.org/x/time/rate"
 	"google.golang.org/genai"
 )
@@ -53,8 +54,10 @@ func AuditTweets(
 
 	var allResults []gemini.FlaggedTweet
 
+	bar := progressbar.Default(int64(len(batches)))
 	for _, batch := range batches { 
 		// for each batch
+		
 
 		select {
     	case <-ctx.Done():
@@ -67,7 +70,7 @@ func AuditTweets(
 			// for each retry
 
 			limiter.Wait(ctx)
-			
+
 			results, err := client.AnalyzeTweets(batch, username, criteria) // call analyze tweets
 
 			fmt.Printf("error type: %T\n", err)
@@ -95,6 +98,8 @@ func AuditTweets(
 			// break out of retry loop after it has been successfully appended
 			break
 		}
+
+		bar.Add(1)
 	}
 
 	return allResults, nil

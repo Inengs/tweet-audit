@@ -105,7 +105,7 @@ func TestAuditTweets_ReturnsFlaggedTweets(t *testing.T) {
 	tweets := make([]archive.Tweet, 5)
 	ctx := context.Background()
 
-	limiter := rate.NewLimiter(rate.Inf, 1)
+	limiter := rate.NewLimiter(rate.Inf, 1) // unlimited rate for tests
 	results, err := audit.AuditTweets(ctx, mock, limiter, tweets, "user", config.Criteria{})
 
 	if err != nil {

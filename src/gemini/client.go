@@ -101,7 +101,7 @@ Return a JSON array like this (empty array if none should be deleted):
 [
   {
     "tweet_url": "https://x.com/%s/status/TWEET_ID_HERE",
-    "deleted": true,
+    "deleted": false,
     "reason": "short reason",
     "confidence": 8
   }

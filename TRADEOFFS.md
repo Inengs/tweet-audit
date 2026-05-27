@@ -18,11 +18,11 @@ Tweets are processed in batches of 20 per Gemini API call.
 
 ## Error Handling
 
-On a failed batch, the tool retries up to 3 times with a 5-second delay for rate limit errors (429). For any other error, it logs and skips the batch.
+On a failed batch, the tool retries up to 3 times. A token bucket rate limiter (`golang.org/x/time/rate`) throttles requests to stay within the free tier limit of 5 requests per minute, preventing most 429 errors proactively. For unrecoverable errors, the batch is skipped and the pipeline continues.
 
-**Why:** Retrying on 429s is necessary since rate limits are temporary. Skipping non-recoverable errors keeps the pipeline moving rather than halting the entire audit.
+**Why:** The token bucket prevents hitting rate limits in the first place rather than reacting after the fact. Retrying on 429s handles the edge cases the limiter misses.
 
-**Tradeoff:** Skipped batches mean some tweets are never evaluated. The user is not explicitly notified which tweets were skipped.
+**Tradeoff:** The limiter adds latency — processing 665 tweets takes longer than the API would technically allow if limits weren't an issue.
 
 ## Prompt Design
 
@@ -37,3 +37,7 @@ The Gemini prompt encodes user criteria as structured rules — forbidden words,
 The tool prioritizes safety over speed — sequential processing, retries before skipping, and incremental CSV writes ensure no data is lost mid-run.
 
 **Tradeoff:** The tool is slower than it could be with concurrency.
+
+## Why I chose Go
+
+I want to go as deep into the Go ecosystem as I can, and also Go makes concurrency a first class citizen so i felt that makes it good for the task
