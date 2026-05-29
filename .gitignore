@@ -1,0 +1,16 @@
+twitter-*.zip
+data/
+*.zip
+
+# config file with API key
+config.json        
+
+
+*.csv
+
+# Go
+bin/
+
+.env
+.env.local
+*.env
