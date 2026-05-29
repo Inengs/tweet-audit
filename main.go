@@ -22,7 +22,7 @@ func main() {
 		log.Fatalf("error in loading config files, %v", err)
 	}
 
-	fmt.Printf("Using API key: %s...\n", c.GeminiAPIkey[:10])
+	// fmt.Printf("Using API key: %s...\n", c.GeminiAPIkey[:10])
 	
 	archiveTweets, err := archive.FileParser(c.ArchivePath)
 	if err != nil {
